@@ -26,10 +26,7 @@ app.use(cors(corsOptions));
 */
 
 
-//SOCKETS FUNKER NÅ SÅ GÅR AN Å BEGYNNE PÅ DET
-io.on('connection', (socket) => {
-    console.log('User connected');
-})
+
 
 
 app.use(bodyParser.json());
@@ -80,6 +77,19 @@ app.post('/', (req, res) => {
     //Et placeholdersvar til klienten som sendte POST slik at den ikke bare suser og går for evig
     res.send("data received");
 });
+
+//SOCKET.IO, venter på at klienter skal koble seg til, og tar verdier sendt derfra
+io.on('connection', (socket) => {
+    //Loggfører og sjekker hvor tilkoblingen kommer fra
+    console.log(`Connection from: ${socket.request.connection.remoteAddress}`)
+    //
+    socket.on('usr&response', ({brukernavn, svar}) => {
+        console.log(`${brukernavn}: ${svar}`);
+        sendResponseToFrontend(brukernavn, svar);
+    })
+})
+
+
 
 //-------------------------------------------------------------------------------------
 
