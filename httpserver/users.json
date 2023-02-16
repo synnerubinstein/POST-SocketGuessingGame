@@ -1,0 +1,10 @@
+{
+    "users": [
+      {"name": "Alice", "score": 0},
+      {"name": "Bob", "score": 0},
+      {"name": "Charlie", "score": 0},
+      {"name": "David", "score": 0},
+      {"name": "Eve", "score": 0}
+    ]
+}
+
