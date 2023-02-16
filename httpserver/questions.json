@@ -1,0 +1,31 @@
+{
+    "quiz": [
+      {
+        "question": "What is the capital of France?",
+        "options": [
+          {"id": "a", "text": "Madrid"},
+          {"id": "b", "text": "Paris", "isCorrect": true},
+          {"id": "c", "text": "Berlin"},
+          {"id": "d", "text": "London"}
+        ]
+      },
+      {
+        "question": "What is the largest ocean in the world?",
+        "options": [
+          {"id": "a", "text": "Atlantic Ocean"},
+          {"id": "b", "text": "Indian Ocean"},
+          {"id": "c", "text": "Arctic Ocean"},
+          {"id": "d", "text": "Pacific Ocean", "isCorrect": true}
+        ]
+      },
+      {
+        "question": "Who painted the Mona Lisa?",
+        "options": [
+          {"id": "a", "text": "Leonardo da Vinci", "isCorrect": true},
+          {"id": "b", "text": "Pablo Picasso"},
+          {"id": "c", "text": "Vincent van Gogh"},
+          {"id": "d", "text": "Michelangelo"}
+        ]
+      }
+    ]
+  }
