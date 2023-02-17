@@ -16,6 +16,15 @@ const bodyParser = require('body-parser');
 const path = require('path');
 app.use(express.static(path.join(__dirname, 'build')));
 
+//SPØRSMÅL
+const questions = require('./questions.json');
+
+//Manuelt satt currentQuestion og currentOption for øyeblikket: burde loope gjennom
+let currentQuiz = questions.quiz[0]
+let currentQuestion = currentQuiz.question;
+let currentOption = currentQuiz.options;
+
+
 /* CORS STUFF WOW ANNOYING
 const cors = require('cors');
 const corsOptions = {
@@ -46,14 +55,26 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname, 'build' , 'index.html');
 })
 
-
+function sendNewQuestionToFrontend() {
+    //TODO LIST THROUGH QUESTIONS.JSON
+    io.emit('question', currentQuiz);
+}
 
 
 
 function sendResponseToFrontend(username, response) {
-    //TODO: Send response to frontend
-    io.emit('usr&res', (`${username} has responded with: ${response}`));
+    
+    let filteredUsername = username.replace(/["]/g,'').replace(/\n/g, '');
+    let filteredResponse = response.replace(/["]/g,'')
 
+    console.log(filteredUsername)
+
+    //TODO: Send response to frontend
+    io.emit('usr&res', (`${filteredUsername} : ${filteredResponse}\n`));
+    
+
+    //TEST LINE, bruk for å gi Frontend et spørsmål kun
+    //io.emit('question', questions.quiz[0]);
     
 }
 
@@ -72,6 +93,9 @@ app.post('/', (req, res) => {
     //Logger brukernavn og svar, sender derfra til en egen funksjon
     //BURDE UTFØRE SVAR-VALIDERING I EN EGEN FUNKSJON FØR DET SENDES TIL FRONTEND
     console.log(`${brukernavn}: ${svar}`);
+
+    //VerifySvar funksjonen fungerer, men vet ikke om det er verdt å implementere før vi eventuelt har et scoringsystem
+    //console.log(verifySvar(svar));
     sendResponseToFrontend(brukernavn, svar);
 
     //Et placeholdersvar til klienten som sendte POST slik at den ikke bare suser og går for evig
@@ -90,6 +114,24 @@ io.on('connection', (socket) => {
 })
 
 
+//VERIFISER SVARET
+function verifySvar(svar) {
+    //Fjerner de unødvendige "" fra strengen vår
+    let optionId = svar.replace(/["]/g,'')
+
+    // Find the option object with the same id
+    const option = currentOption.find(o => o.id === optionId);
+
+    // Check if the option has the isCorrect trait
+    if (option.isCorrect) {
+    return true;
+    } else {
+    return false;
+    }
+}
+
+
+
 
 //-------------------------------------------------------------------------------------
 
@@ -97,4 +139,5 @@ io.on('connection', (socket) => {
 //KJØRER SERVEREN
 server.listen(3000, () => {
     console.log('Server hører nå etter');
+
 })

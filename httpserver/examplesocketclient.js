@@ -5,7 +5,7 @@ const socket = io('http://localhost:3000');
 
 //Definer hva brukernavnet vårt er og hva svaret vårt er
 let brukernavn = 'moskito'
-let svar = '3asdasdasd'
+let svar = 'ABCDEF'
 
 
 //Koble seg til socket serveren.
