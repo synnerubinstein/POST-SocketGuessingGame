@@ -89,11 +89,14 @@ app.post('/', (req, res) => {
 
     //VerifySvar er en funksjon som sjekker om svaret er riktig eller feil, og returnerer true eller false.
     //For øyeblikket loggføres det kun i server-konsollen, men det kan sendes til klienten også.
-    if(verifySvar(svar)) {
+   try{ if(verifySvar(svar)) {
         console.log("Riktig svar");
     }
     else {
         console.log("Feil svar")
+    }}
+    catch(err) {
+        console.log("Svaret er ikke et alternativ")
     }
     //Funksjonkall av sendResponseToFrontend, sender brukernavn og svar til storskjermen. 
     sendResponseToFrontend(brukernavn, svar);
