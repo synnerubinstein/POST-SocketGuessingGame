@@ -16,38 +16,24 @@ const bodyParser = require('body-parser');
 const path = require('path');
 app.use(express.static(path.join(__dirname, 'build')));
 
-//SPØRSMÅL
+//Spørsmålsvariabler, henter liste med spørsmål fra questions.json og nå i starten av scriptet definerer spørsmålnummeret som 0.
 const questions = require('./questions.json');
+let whichNumberQuestion = 0;
 
-//Manuelt satt currentQuestion og currentOption for øyeblikket: burde loope gjennom
-let currentQuiz = questions.quiz[0]
+//Currentquiz forteller oss hvilket spørsmål vi er på, og currentQuestion og currentOption forteller oss hvilket spørsmål og hvilke alternativer som er tilgjengelige.
+let currentQuiz = questions.quiz[whichNumberQuestion]
 let currentQuestion = currentQuiz.question;
 let currentOption = currentQuiz.options;
 
+//setInterval er en funksjon som kjører funksjonen i første parameter hvert 30 sekund, og gjør at vi kan få et nytt spørsmål hvert 30 sekund
+setInterval(sendNewQuestionToFrontend, 30000);
 
-/* CORS STUFF WOW ANNOYING
+/* CORS - Cross Origin Resource Sharing: Disse linjene kan være brukbar i tilfelle vi får noen problemer med socket.io tilkobling fra eksterne klienter.
 const cors = require('cors');
-const corsOptions = {
-    origin: 'http://localhost:3000',
-
-};
-app.use(cors(corsOptions));
 */
-
-
-
-
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-
-//Hører etter på GET requests, og forteller at vi kan servere index.html da
-/*
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-})*/
-
 
 //Hører på GET requests, og server build mappen under /httpserver/build
 //npm run build i reactapp, og kopier build filene til httpserver for nå
@@ -55,26 +41,33 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname, 'build' , 'index.html');
 })
 
+//Looper gjennom spørsmålslisten og sender neste klare, og inkrementerer whichNumberQuestion.
+//Når spørsmålslisten er ferdig, resettes whichNumberQuestion til 0, og starter quizzen på nytt.
 function sendNewQuestionToFrontend() {
-    //TODO LIST THROUGH QUESTIONS.JSON
-    io.emit('question', currentQuiz);
+    if(questions.quiz[whichNumberQuestion]) {
+        //Oppdater noen variabler slik at andre funksjoner som bruker dem har riktig informasjon om hvilket spørsmål vi er på
+        currentQuiz = questions.quiz[whichNumberQuestion]
+        currentOption = currentQuiz.options;
+        io.emit('question', questions.quiz[whichNumberQuestion]);
+        whichNumberQuestion++;
+    }
+    else {
+        whichNumberQuestion = 0;
+    }
+    
 }
 
 
 
 function sendResponseToFrontend(username, response) {
     
+    //Filtrerer bort rot og tull som gjerne blir lagt til strengene vi får mottatt av klienten.
+    //Korte trekk, input-validering
     let filteredUsername = username.replace(/["]/g,'').replace(/\n/g, '');
     let filteredResponse = response.replace(/["]/g,'')
 
-    console.log(filteredUsername)
-
-    //TODO: Send response to frontend
+    //Sender et svar til front-enden med brukernavn og svar vi har fått fra klienten.
     io.emit('usr&res', (`${filteredUsername} : ${filteredResponse}\n`));
-    
-
-    //TEST LINE, bruk for å gi Frontend et spørsmål kun
-    //io.emit('question', questions.quiz[0]);
     
 }
 
@@ -94,19 +87,24 @@ app.post('/', (req, res) => {
     //BURDE UTFØRE SVAR-VALIDERING I EN EGEN FUNKSJON FØR DET SENDES TIL FRONTEND
     console.log(`${brukernavn}: ${svar}`);
 
-    //VerifySvar funksjonen fungerer, men vet ikke om det er verdt å implementere før vi eventuelt har et scoringsystem
-    //console.log(verifySvar(svar));
+    //VerifySvar er en funksjon som sjekker om svaret er riktig eller feil, og returnerer true eller false.
+    //For øyeblikket loggføres det kun i server-konsollen, men det kan sendes til klienten også.
+    if(verifySvar(svar)) {
+        console.log("Riktig svar");
+    }
+    else {
+        console.log("Feil svar")
+    }
+    //Funksjonkall av sendResponseToFrontend, sender brukernavn og svar til storskjermen. 
     sendResponseToFrontend(brukernavn, svar);
 
     //Et placeholdersvar til klienten som sendte POST slik at den ikke bare suser og går for evig
-    res.send("data received");
+    res.send("Success!");
 });
 
 //SOCKET.IO, venter på at klienter skal koble seg til, og tar verdier sendt derfra
 io.on('connection', (socket) => {
-    //Loggfører og sjekker hvor tilkoblingen kommer fra
-    console.log(`Connection from: ${socket.request.connection.remoteAddress}`)
-    //
+    //Venter på at klienten skal sende en 'usr&response' melding, og tar inn brukernavn og svar
     socket.on('usr&response', ({brukernavn, svar}) => {
         console.log(`${brukernavn}: ${svar}`);
         sendResponseToFrontend(brukernavn, svar);
