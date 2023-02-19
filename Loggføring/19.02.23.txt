@@ -1,0 +1,22 @@
+Hvordan bruke Github:
+https://www.youtube.com/watch?v=HkdAHXoRtos
+https://www.youtube.com/watch?v=77W2JSL7-r8
+
+POST request: 
+https://www.youtube.com/watch?v=tkfVQK6UxDI
+https://www.youtube.com/watch?v=lsMQRaeKNDk
+
+Socket IO:
+https://www.youtube.com/watch?v=1BfCnjr_Vjg
+https://www.youtube.com/watch?v=rxzOqP9YwmM
+
+Sette opp et utviklingsmiljø i React:
+https://www.youtube.com/watch?v=71lNYi9EstE
+
+Vi satt opp et github-repository, snakket litt om hvordan kode i grupper med flere, dele opp arbeid og scrum.
+Vi sendte POST-requests til back-enden som ligger under httpserver/server.js, og satt opp et delt dev-miljø slik at det går an å samarbeide på prosjektet om å lage en klient med kapabilitet til å sende POST-requests av eget design til backenden.
+
+
+
+
+
