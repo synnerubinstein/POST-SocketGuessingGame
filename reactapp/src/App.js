@@ -8,6 +8,7 @@ function App() {
 
 const [UserResponse, setUserResponse] = useState("");
 const [currentQuestion, setCurrentQuestion] = useState("");
+let eksempel = 0;
 
 const [option1, setOption1] = useState("");
 const [option2, setOption2] = useState("");
