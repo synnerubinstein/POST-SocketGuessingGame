@@ -26,6 +26,15 @@
           {"id": "c", "text": "Vincent van Gogh"},
           {"id": "d", "text": "Michelangelo"}
         ]
+      }, 
+      {
+        "question": "What is the highest mountain in Norway?",
+        "options": [
+          {"id": "a", "text": "Mount Everest", "isCorrect": true},
+          {"id": "b", "text": "Fløyen"},
+          {"id": "c", "text": "K2"},
+          {"id": "d", "text": "Kilimanjaro"}
+        ]
       }
     ]
   }
